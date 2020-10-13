@@ -20,7 +20,7 @@ class DataConnectionChecker {
   /// here:
   /// - https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
   /// - https://www.google.com/search?q=dns+server+port
-  static const int DEFAULT_PORT = 53;
+  static const int DEFAULT_PORT = 443;
 
   /// Default timeout is 10 seconds.
   ///
@@ -115,11 +115,8 @@ class DataConnectionChecker {
   ) async {
     Socket sock;
     try {
-      sock = await Socket.connect(
-        options.address,
-        options.port,
-        timeout: options.timeout,
-      );
+      sock = await SecureSocket.connect(options.address, options.port,
+          timeout: options.timeout, onBadCertificate: (_) => true);
       sock?.destroy();
       return AddressCheckResult(options, true);
     } catch (e) {
